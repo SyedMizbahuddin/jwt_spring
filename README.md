@@ -15,6 +15,10 @@ To run this project, you will need to add the following environment variables to
 spring.datasource.url=jdbc:mysql://localhost:3306/database_name
 spring.datasource.username=user_name
 spring.datasource.password=user_password
+
+jwt.token.secret.key=256-bit key 
+#5 minutes
+jwt.token.secret.validity=300
 ```
 
 
