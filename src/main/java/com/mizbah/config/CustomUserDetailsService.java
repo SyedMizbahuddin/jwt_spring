@@ -1,5 +1,6 @@
 package com.mizbah.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,14 +10,13 @@ import org.springframework.stereotype.Service;
 import com.mizbah.entity.Employee;
 import com.mizbah.repository.EmployeeRepository;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+	@Autowired
 	EmployeeRepository employeeRepository;
 
 	@Override
