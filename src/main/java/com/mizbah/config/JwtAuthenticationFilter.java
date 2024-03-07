@@ -30,6 +30,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		final String authHeader = request.getHeader("Authorization");
 
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+			// In the next security Filter Chain it will be marked Unauthenticated, or
+			// /signup ..
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -37,20 +39,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		final String jwt = authHeader.substring(7);
 		final String userEmail = jwtService.extractUserName(jwt);
 
-		// If we have Authentication in context then skip
 		if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			// user is not connected, or not Logged in
+			// We have to set this Authentication So that in the next filter chain it is
+			// marked Authenticated
 
 			UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
 
+			// Mark Authenticated if and only if it valid
 			if (jwtService.isTokenValid(jwt, userDetails)) {
 
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
-						null, userDetails.getAuthorities());
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
 
-				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-				SecurityContextHolder.getContext().setAuthentication(authToken);
+				// Now we say that this jwt request is Authenticated
+				SecurityContextHolder.getContext().setAuthentication(authentication);
 
 			}
 
